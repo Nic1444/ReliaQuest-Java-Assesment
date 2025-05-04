@@ -1,7 +1,6 @@
-package com.reliaquest.api.EmplyeeClientMockResponse;
+package com.reliaquest.api.dto.EmplyeeClientMockResponse;
 
-import com.reliaquest.api.dto.EmployeeDto;
-import java.util.List;
+import com.reliaquest.api.dto.response.EmployeeDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmployeeApiResponse {
-    private List<EmployeeDto> data;
+    private EmployeeDto data;
 }

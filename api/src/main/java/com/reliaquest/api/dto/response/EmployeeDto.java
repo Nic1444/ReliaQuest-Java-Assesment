@@ -1,4 +1,4 @@
-package com.reliaquest.api.dto;
+package com.reliaquest.api.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
