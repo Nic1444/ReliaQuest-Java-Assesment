@@ -1,11 +1,15 @@
 package com.reliaquest.api.controller;
 
-import com.reliaquest.api.dto.EmployeeDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.reliaquest.api.dto.request.CreateEmployeeRequest;
+import com.reliaquest.api.dto.response.EmployeeDto;
 import com.reliaquest.api.service.EmployeeService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class EmployeeControllerImpl implements IEmployeeController {
 
     private final EmployeeService employeeService;
+    private final ObjectMapper objectMapper;
 
     @Override
     @GetMapping()
@@ -31,27 +36,42 @@ public class EmployeeControllerImpl implements IEmployeeController {
     }
 
     @Override
-    public ResponseEntity getEmployeeById(String id) {
-        return null;
+    @GetMapping("/{id}")
+    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable String id) {
+
+        return this.employeeService.getEmployeeById(id);
     }
 
     @Override
+    @GetMapping("/highest-salary")
     public ResponseEntity<Integer> getHighestSalaryOfEmployees() {
-        return null;
+        return this.employeeService.getHighestSalaryOfEmployees();
     }
 
+    /**
+     * Note-
+     * In api.README description looks incorrect its saying get 10 Employee objects
+     * but in IEmployeeController interface we are returning employeeNames as string
+     */
     @Override
+    @GetMapping("/top-10-earners")
     public ResponseEntity<List<String>> getTopTenHighestEarningEmployeeNames() {
-        return null;
+        return this.employeeService.getTopTenHighestEarningEmployeeNames();
     }
 
     @Override
-    public ResponseEntity createEmployee(Object employeeInput) {
-        return null;
+    @PostMapping("/create")
+    public ResponseEntity<EmployeeDto> createEmployee(Object employeeInput) {
+        CreateEmployeeRequest empRequest = convertToDto(employeeInput, CreateEmployeeRequest.class);
+        return this.employeeService.createEmployee(empRequest);
     }
 
     @Override
     public ResponseEntity<String> deleteEmployeeById(String id) {
         return null;
+    }
+
+    private <T> T convertToDto(Object input, Class<T> clazz) {
+        return this.objectMapper.convertValue(input, clazz);
     }
 }
