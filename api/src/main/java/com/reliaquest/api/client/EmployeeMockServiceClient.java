@@ -3,6 +3,8 @@ package com.reliaquest.api.client;
 import com.reliaquest.api.dto.EmplyeeClientMockResponse.EmployeeApiResponse;
 import com.reliaquest.api.dto.EmplyeeClientMockResponse.EmployeeListApiResponse;
 import com.reliaquest.api.dto.request.CreateEmployeeRequest;
+import com.reliaquest.api.dto.request.DeleteEmployeeRequest;
+import com.reliaquest.api.dto.request.Response;
 import com.reliaquest.api.dto.response.EmployeeDto;
 import java.util.Collections;
 import java.util.Comparator;
@@ -184,6 +186,34 @@ public class EmployeeMockServiceClient {
                 .orElseThrow(() -> new RuntimeException("Failed to create employee"));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdEmployee);
+    }
+
+    public ResponseEntity<String> deleteEmployeeById(String id) {
+        ResponseEntity<EmployeeDto> employeeDto = this.getEmployeeById(id);
+        String employeeName = Objects.requireNonNull(employeeDto.getBody()).getEmployeeName();
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            DeleteEmployeeRequest deleteEmployeeRequest = new DeleteEmployeeRequest();
+            deleteEmployeeRequest.setEmployeeName(employeeName);
+
+            HttpEntity<DeleteEmployeeRequest> httpEntity = new HttpEntity<>(deleteEmployeeRequest, headers);
+            ResponseEntity<Response<Boolean>> response = restTemplate.exchange(
+                    mockApiUrl, HttpMethod.DELETE, httpEntity, new ParameterizedTypeReference<Response<Boolean>>() {});
+
+            Response<Boolean> responseBody = response.getBody();
+
+            if (responseBody != null && Boolean.TRUE.equals(responseBody.getData())) {
+                return ResponseEntity.ok(employeeName);
+            } else {
+                throw new RuntimeException("Failed to delete employee: "
+                        + (responseBody != null ? responseBody.getError() : "Unknown error"));
+            }
+
+        } catch (Exception e) {
+            log.error("Error while deleting employee ", e);
+        }
+        return null;
     }
 
     private RetryTemplate createRetryTemplate() {

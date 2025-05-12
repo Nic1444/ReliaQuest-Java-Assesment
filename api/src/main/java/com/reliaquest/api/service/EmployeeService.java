@@ -39,4 +39,8 @@ public class EmployeeService {
     public ResponseEntity<EmployeeDto> createEmployee(CreateEmployeeRequest empRequest) {
         return this.employeeMockServiceClient.createEmployee(empRequest);
     }
+
+    public ResponseEntity<String> deleteEmployeeById(String id) {
+        return this.employeeMockServiceClient.deleteEmployeeById(id);
+    }
 }
